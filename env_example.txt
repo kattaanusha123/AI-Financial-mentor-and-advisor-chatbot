@@ -1,0 +1,13 @@
+# Flask Configuration
+SECRET_KEY=your-secret-key-here-change-in-production
+JWT_SECRET_KEY=your-jwt-secret-key-here-change-in-production
+
+# Database Configuration
+DATABASE_URL=sqlite:///financial_chatbot.db
+
+# Optional: OpenAI API Key for enhanced NLP (if you want to use OpenAI)
+OPENAI_API_KEY=your-openai-api-key-optional
+
+# Server Configuration
+PORT=5000
+

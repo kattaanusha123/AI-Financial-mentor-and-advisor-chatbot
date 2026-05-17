@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Mentor & Advisor Chatbot</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="ui-translations.js"></script>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content auth-modal">
+            <div class="modal-header-decoration">
+                <div class="decoration-circle circle-1"></div>
+                <div class="decoration-circle circle-2"></div>
+                <div class="decoration-circle circle-3"></div>
+            </div>
+            <span class="close">&times;</span>
+            <div class="auth-header">
+                <div class="auth-icon">💰</div>
+                <h2>Welcome to Financial Mentor</h2>
+                <p class="auth-subtitle">Your 24/7 Financial Advisor & Investment Guide</p>
+            </div>
+            <div class="auth-tabs">
+                <button class="tab-button active" onclick="showTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="tab-button" onclick="showTab('register')">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginTab" class="tab-content active">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginUsername">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input type="text" id="loginUsername" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-auth">
+                        <i class="fas fa-sign-in-alt"></i> Login to Your Account
+                    </button>
+                    <div class="auth-divider">
+                        <span>New to Financial Mentor?</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-auth" onclick="showTab('register')">
+                        <i class="fas fa-user-plus"></i> Create New Account
+                    </button>
+                    <div class="auth-divider guest-divider">
+                        <span>OR</span>
+                    </div>
+                    <button type="button" class="btn btn-guest btn-auth" onclick="continueAsGuest()">
+                        <i class="fas fa-user-circle"></i> Continue as Guest (Try Free)
+                    </button>
+                    <p class="guest-note">💡 Try our bot without registration! Sign up later to save your chat history.</p>
+                </form>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerTab" class="tab-content">
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registerUsername">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        <input type="text" id="registerUsername" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" id="registerEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="registerPassword" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-auth">
+                        <i class="fas fa-rocket"></i> Start Your Financial Journey
+                    </button>
+                    <div class="auth-divider">
+                        <span>Already have an account?</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-auth" onclick="showTab('login')">
+                        <i class="fas fa-sign-in-alt"></i> Login Instead
+                    </button>
+                    <div class="auth-divider guest-divider">
+                        <span>OR</span>
+                    </div>
+                    <button type="button" class="btn btn-guest btn-auth" onclick="continueAsGuest()">
+                        <i class="fas fa-user-circle"></i> Continue as Guest (Try Free)
+                    </button>
+                    <p class="guest-note">💡 Try our bot without registration! Sign up later to save your chat history.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container" id="mainContainer" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><span class="header-emoji">💰</span> Financial Mentor</h1>
+                <!-- Guest Mode Banner -->
+                <div id="guestBanner" class="guest-banner" style="display: none;">
+                    <div class="guest-banner-content">
+                        <span class="guest-icon">👤</span>
+                        <span class="guest-text">You're browsing as a guest. <a href="#" onclick="showLoginModal(); return false;" class="guest-link">Login</a> or <a href="#" onclick="showTab('register'); showLoginModal(); return false;" class="guest-link">Sign up</a> to save your chat history and access premium features!</span>
+                        <button class="guest-close" onclick="closeGuestBanner()">×</button>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <select id="languageSelector" class="btn btn-secondary language-selector" onchange="changeLanguageAndUI(this.value)" title="Select Language">
+                        <option value="en">🇬🇧 English</option>
+                        <option value="hi">🇮🇳 हिंदी</option>
+                        <option value="te">🇮🇳 తెలుగు</option>
+                        <option value="mr">🇮🇳 मराठी</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="showCalculator()">
+                        <i class="fas fa-calculator"></i> <span class="btn-emoji">🧮</span> Calculator
+                    </button>
+                    <button class="btn btn-secondary" onclick="showCharts()">
+                        <i class="fas fa-chart-line"></i> <span class="btn-emoji">📈</span> Live Charts
+                    </button>
+                    <button class="btn btn-secondary" onclick="showMarketUpdates()">
+                        <i class="fas fa-newspaper"></i> <span class="btn-emoji">📰</span> News
+                    </button>
+                    <button class="btn btn-secondary" onclick="showHistory()">
+                        <i class="fas fa-history"></i> <span class="btn-emoji">📜</span> History
+                    </button>
+                    <!-- Persistent header auth buttons (visible depending on auth state) -->
+                    <button id="loginHeaderBtn" class="btn btn-primary" onclick="showTab('login'); showLoginModal();" style="display:none;">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    <button id="registerHeaderBtn" class="btn btn-secondary" onclick="showTab('register'); showLoginModal();" style="display:none;">
+                        <i class="fas fa-user-plus"></i> Register
+                    </button>
+                    <button class="btn btn-danger" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Chat Section -->
+            <div class="chat-section" id="chatSection">
+                <div class="chat-header">
+                    <h2><span class="header-emoji">🤖</span> Chat with Your Financial Advisor</h2>
+                    <div class="chat-header-actions">
+                        <button class="btn-icon" id="voiceToggleBtn" onclick="toggleVoiceResponse()" title="Toggle Voice Response">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <button class="btn-icon" onclick="exportChatHistory()" title="Export Chat History">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="btn-icon" onclick="getMotivationalQuote()" title="Get Motivational Quote">
+                            <i class="fas fa-quote-left"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Quick Actions -->
+                <div class="quick-actions" id="quickActions">
+                    <button class="quick-action-btn" onclick="sendQuickMessage('What is SIP?')">
+                        <span class="emoji-btn">💡</span> What is SIP?
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('How to save tax?')">
+                        <span class="emoji-btn">💼</span> Tax Saving
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('How to plan for retirement?')">
+                        <span class="emoji-btn">🏖️</span> Retirement
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Emergency fund calculator')">
+                        <span class="emoji-btn">🛡️</span> Emergency Fund
+                    </button>
+                    <button class="quick-action-btn" onclick="showCalculator()">
+                        <span class="emoji-btn">🧮</span> Calculator
+                    </button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message-group bot-group">
+                        <div class="message bot-message">
+                            <div class="message-avatar">🤖</div>
+                            <div class="message-content">
+                                <p>👋 Hello! I'm your Financial Mentor. I can help you with:</p>
+                                <ul>
+                                    <li>💡 Explaining financial terms and concepts</li>
+                                    <li>🧮 Calculating EMI, SIP, interest rates, and savings</li>
+                                    <li>📊 Providing investment and savings advice</li>
+                                    <li>💰 Answering questions about budgeting and financial planning</li>
+                                    <li>📈 Live market updates and charts</li>
+                                    <li>🌍 Multi-language support</li>
+                                </ul>
+                                <p>What would you like to know today? ✨</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <button class="btn-icon voice-btn" id="voiceBtn" onclick="startVoiceRecognition()" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <input type="text" id="chatInput" placeholder="Ask me anything about finance..." onkeypress="handleKeyPress(event)">
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calculator Section -->
+            <div class="calculator-section" id="calculatorSection" style="display: none;">
+                <div class="calculator-header">
+                    <h2><span class="header-emoji">🧮</span> Financial Calculator</h2>
+                    <button class="btn-icon" onclick="closeCalculator()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="calculator-tabs">
+                    <button class="calc-tab active" onclick="showCalcTab('emi')">
+                        <span class="tab-emoji">🏠</span> EMI
+                    </button>
+                    <button class="calc-tab" onclick="showCalcTab('sip')">
+                        <span class="tab-emoji">📈</span> SIP
+                    </button>
+                    <button class="calc-tab" onclick="showCalcTab('compound')">
+                        <span class="tab-emoji">💎</span> Compound Interest
+                    </button>
+                    <button class="calc-tab" onclick="showCalcTab('simple')">
+                        <span class="tab-emoji">📊</span> Simple Interest
+                    </button>
+                </div>
+                
+                <!-- EMI Calculator -->
+                <div id="emiCalc" class="calc-content active">
+                    <h3>EMI Calculator</h3>
+                    <div class="form-group">
+                        <label>Loan Amount (₹)</label>
+                        <input type="number" id="emiPrincipal" placeholder="Enter loan amount">
+                    </div>
+                    <div class="form-group">
+                        <label>Interest Rate (% per annum)</label>
+                        <input type="number" id="emiRate" placeholder="Enter interest rate">
+                    </div>
+                    <div class="form-group">
+                        <label>Loan Tenure (months)</label>
+                        <input type="number" id="emiTenure" placeholder="Enter tenure">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateEMI()">Calculate EMI</button>
+                    <div id="emiResult" class="calc-result"></div>
+                </div>
+                
+                <!-- SIP Calculator -->
+                <div id="sipCalc" class="calc-content">
+                    <h3>SIP Calculator</h3>
+                    <div class="form-group">
+                        <label>Monthly Investment (₹)</label>
+                        <input type="number" id="sipAmount" placeholder="Enter monthly amount">
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Return (% per annum)</label>
+                        <input type="number" id="sipRate" placeholder="Enter expected return">
+                    </div>
+                    <div class="form-group">
+                        <label>Investment Period (years)</label>
+                        <input type="number" id="sipYears" placeholder="Enter years">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateSIP()">Calculate SIP</button>
+                    <div id="sipResult" class="calc-result"></div>
+                </div>
+                
+                <!-- Compound Interest Calculator -->
+                <div id="compoundCalc" class="calc-content">
+                    <h3>Compound Interest Calculator</h3>
+                    <div class="form-group">
+                        <label>Principal Amount (₹)</label>
+                        <input type="number" id="compoundPrincipal" placeholder="Enter principal">
+                    </div>
+                    <div class="form-group">
+                        <label>Interest Rate (% per annum)</label>
+                        <input type="number" id="compoundRate" placeholder="Enter interest rate">
+                    </div>
+                    <div class="form-group">
+                        <label>Time Period (years)</label>
+                        <input type="number" id="compoundYears" placeholder="Enter years">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateCompound()">Calculate</button>
+                    <div id="compoundResult" class="calc-result"></div>
+                </div>
+                
+                <!-- Simple Interest Calculator -->
+                <div id="simpleCalc" class="calc-content">
+                    <h3>Simple Interest Calculator</h3>
+                    <div class="form-group">
+                        <label>Principal Amount (₹)</label>
+                        <input type="number" id="simplePrincipal" placeholder="Enter principal">
+                    </div>
+                    <div class="form-group">
+                        <label>Interest Rate (% per annum)</label>
+                        <input type="number" id="simpleRate" placeholder="Enter interest rate">
+                    </div>
+                    <div class="form-group">
+                        <label>Time Period (years)</label>
+                        <input type="number" id="simpleYears" placeholder="Enter years">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateSimple()">Calculate</button>
+                    <div id="simpleResult" class="calc-result"></div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section" id="chartsSection" style="display: none;">
+                <div class="charts-header">
+                    <h2><span class="header-emoji">📈</span> Live Market Charts</h2>
+                    <div class="charts-header-actions">
+                        <button class="btn-icon" id="autoRefreshBtn" onclick="toggleAutoRefresh()" title="Auto Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button class="btn-icon" onclick="closeCharts()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fab fa-bitcoin"></i> Bitcoin (BTC)</h3>
+                            <div class="chart-price" id="btcPrice">
+                                <span class="price-value">--</span>
+                                <span class="price-change" id="btcChange">--</span>
+                            </div>
+                        </div>
+                        <canvas id="bitcoinChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-coins"></i> Gold Price</h3>
+                            <div class="chart-price" id="goldPrice">
+                                <span class="price-value">--</span>
+                                <span class="price-change" id="goldChange">--</span>
+                            </div>
+                        </div>
+                        <canvas id="goldChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> NIFTY 50</h3>
+                            <div class="chart-price" id="niftyPrice">
+                                <span class="price-value">--</span>
+                                <span class="price-change" id="niftyChange">--</span>
+                            </div>
+                        </div>
+                        <canvas id="niftyChart"></canvas>
+                    </div>
+                </div>
+                <div class="news-feed" id="chartsNewsFeed">
+                    <h3><i class="fas fa-newspaper"></i> Latest Financial News</h3>
+                    <div id="newsContent"></div>
+                </div>
+            </div>
+
+            <!-- Market Updates Section -->
+            <div class="market-section" id="marketSection" style="display: none;">
+                <div class="market-header">
+                    <h2><span class="header-emoji">📰</span> Market Updates & News</h2>
+                    <button class="btn-icon" onclick="closeMarketUpdates()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="marketContent" class="market-content"></div>
+            </div>
+
+            <!-- History Section -->
+            <div class="history-section" id="historySection" style="display: none;">
+                <div class="history-header">
+                    <h2><span class="header-emoji">📜</span> Conversation History</h2>
+                    <button class="btn-icon" onclick="closeHistory()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div id="historyContent" class="history-content"></div>
+            </div>
+            <!-- Profile UI removed; personalization is inferred from past conversation history -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
